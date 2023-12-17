@@ -3,12 +3,12 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"path/filepath"
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 
 	"lenslocked/controllers"
+	"lenslocked/templates"
 	"lenslocked/views"
 )
 
@@ -30,17 +30,12 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	tpl := views.Must(views.Parse(filepath.Join("templates", "home.gohtml")))
-	r.Get("/", controllers.StaticHandler(tpl))
-
-	tpl = views.Must(views.Parse(filepath.Join("templates", "contact.gohtml")))
-	r.Get("/contact", controllers.StaticHandler(tpl))
-
-	tpl = views.Must(views.Parse(filepath.Join("templates", "faq.gohtml")))
-	r.Get("/faq", controllers.StaticHandler(tpl))
+	r.Get("/", controllers.StaticHandler(views.Must(views.ParseFS(templates.FS, "home.gohtml", "tailwind.gohtml"))))
+	r.Get("/contact", controllers.StaticHandler(views.Must(views.ParseFS(templates.FS, "contact.gohtml", "tailwind.gohtml"))))
+	r.Get("/faq", controllers.FAQ(views.Must(views.ParseFS(templates.FS, "faq.gohtml", "tailwind.gohtml"))))
 
 	r.Route("/galleries", func(r chi.Router) {
-		tpl = views.Must(views.Parse(filepath.Join("templates", "galleries.gohtml")))
+		tpl := views.Must(views.ParseFS(templates.FS, "galleries.gohtml"))
 		r.Get("/", controllers.StaticHandler(tpl))
 		// Subrouters:
 		r.Route("/{galleriesID}", func(r chi.Router) {

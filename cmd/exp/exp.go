@@ -1,41 +1,30 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"log"
+	"strings"
 )
 
-func Connect() error {
-	// try to connect
-	// pretend we got an error
-	return errors.New("connection failed")
-}
-
-func CreateUser() error {
-	err := Connect()
-	if err != nil {
-		// We can add more context here!
-		return fmt.Errorf("create user: %w", err)
-	}
-	return nil
-}
-
-func CreateOrg() error {
-	err := CreateUser()
-	if err != nil {
-		return fmt.Errorf("create org: %w", err)
-	}
-	return nil
-}
-
 func main() {
-	err := CreateUser()
-	if err != nil {
-		log.Println(err)
+	Demo()
+	Demo(1)
+	Demo(1, 2, 3)
+}
+
+func Demo(numbers ...int) {
+	for _, number := range numbers {
+		fmt.Print(number, " ")
 	}
-	err = CreateOrg()
-	if err != nil {
-		log.Println(err)
+	fmt.Println()
+}
+
+func Join(vals ...string) string {
+	var sb strings.Builder
+	for i, s := range vals {
+		sb.WriteString(s)
+		if i < len(vals)-1 {
+			sb.WriteString(", ")
+		}
 	}
+	return sb.String()
 }
