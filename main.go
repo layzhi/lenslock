@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
+	"github.com/gorilla/csrf"
 
 	"lenslocked/controllers"
 	"lenslocked/models"
@@ -30,6 +31,14 @@ func main() {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+
+	//TODO: remove later
+	csrfKey := "gFvi45R4fy5xNBlnEeZtQbfAVCYEIAUX"
+	csrfMq := csrf.Protect(
+		[]byte(csrfKey),
+		//TODO: Fix this later before deploying
+		csrf.Secure(false),
+	)
 
 	// Setup a database connection
 	cfg := models.DefaultPostgresConfig()
@@ -73,5 +82,5 @@ func main() {
 	})
 
 	fmt.Println("Starting the server on :3000...")
-	http.ListenAndServe(":3000", r)
+	http.ListenAndServe(":3000", csrfMq(r))
 }
